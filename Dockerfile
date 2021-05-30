@@ -15,9 +15,11 @@ COPY . ./
 # Build the binary.
 RUN go build -v -o server
 RUN set -x && apt-get update && apt-get install -y nodejs npm
+# Build the css
 RUN npm install -g npm
 RUN npm install -g sass
-RUN sass static/style.scss static/style.css
+RUN sass html/style.scss html/style.css
+
 # Use the official Debian slim image for a lean production container.
 # https://hub.docker.com/_/debian
 # https://docs.docker.com/develop/develop-images/multistage-build/#use-multi-stage-builds
@@ -29,8 +31,8 @@ RUN set -x && apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -
     rm -rf /var/lib/apt/lists/*
 
 # Copy the binary to the production image from the builder stage.
-ENV PB_STATIC_ROOT /app/static
+ENV PB_STATIC_ROOT /app/html
 COPY --from=builder /app/server /app/server
-COPY ./static /app/static
+COPY --from=builder /app/html /app/html
 # Run the web service on container startup:6379.
 CMD ["/app/server"]
