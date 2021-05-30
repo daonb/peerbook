@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang=en>
+<head>
+<meta charset=utf-8>
+<title>Review you peer list</title>
+<link rel="stylesheet" type="text/css" href="style.css" media="screen"/>
+</head>
+<body>
+    <form class="container" method="post">
+    <ul id="peer-list" class="responsive-table">
+      <li class="table-header">
+        <div class="col col-1">Verified</div>
+        <div class="col col-2">Name</div>
+        <div class="col col-3">Kind</div>
+        <div class="col col-4">Created On</div>
+        <div class="col col-5">Fingerprint</div>
+      </li>
+    </ul>
+    <br/><br/>
+    <input name="rmrf" value="checked" type="checkbox" id="rmrf">
+    <label for="rmrf">Delete all peers</label>
+    <br/><br/>
+    <input type="submit" value="Update">
+    </form>
+    <script>
+    document.addEventListener('DOMContentLoaded', event => {
+        var path = window.location.pathname,
+            i = path.substr(1).indexOf("/"),
+            token = path.substr(i+2),
+            con = document.getElementById("peer-list")
+        fetch(`/list/${token}`).then(response =>  response.json())
+            .then(peers => {
+                        console.log(peers)
+                        if (Array.isArray(peers))
+                peers.forEach(p => {
+                    var newDiv = document.createElement("li")
+                    newDiv.classList.add("table-row")
+                    newDiv.innerHTML=`<div class="col col-1" data-label="Verified" >
+     <input name="rmrf" value="checked" type="checkbox" id="rmrf"></div>
+ <div class="col col-2" data-label="Name">${p.name}</div>
+     <div class="col col-3" data-label="Kind">${p.kind}</div>
+     <div class="col col-4" data-label="Created On">${created}/1/1970</div>
+     <div class="col col-5" data-label="Fingerprint">${p.fp}</div>`,
+
+                    var newCheck = newDiv.querySelector("input")
+                    newCheck.checked = p.verified
+                    newCheck.setAttribute("name", p.fp)
+                    newCheck.id = p.fp
+                    con.appendChild(newDiv)
+                })
+        })
+        document.getElementById("form").setAttribute("action",`/list/${token}`)
+    })
+        
+    </script>
+</body</html>
+
