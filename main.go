@@ -319,17 +319,21 @@ func serveVerify(w http.ResponseWriter, r *http.Request) {
 		w.Write(m)
 	}
 }
-func serveHome(w http.ResponseWriter, r *http.Request) {
+func serveStatic(w http.ResponseWriter, r *http.Request) {
 
+	var fname string
 	if r.URL.Path != "/" {
-		http.Error(w, "Not found", http.StatusNotFound)
+		fname = strings.TrimPrefix(r.URL.Path, "/")
 		return
+	} else {
+		fname = "index.html"
 	}
 	if r.Method != "GET" {
 		http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		return
 	}
-	p := fmt.Sprintf("%s/index.html", os.Getenv("PB_STATIC_ROOT"))
+	p := fmt.Sprintf("%s/%s", os.Getenv("PB_STATIC_ROOT"), fname)
+	Logger.Infof("Serving static url %s from %q", r.URL.Path, p)
 	http.ServeFile(w, r, p)
 }
 
@@ -362,7 +366,7 @@ func startHTTPServer(addr string, wg *sync.WaitGroup) *http.Server {
 	srv := &http.Server{
 		Addr: addr, Handler: cors.Default().Handler(http.DefaultServeMux)}
 
-	http.HandleFunc("/", serveHome)
+	http.HandleFunc("/", serveStatic)
 	http.HandleFunc("/list/", serveList)
 	http.HandleFunc("/auth/", serveAuthPage)
 	http.HandleFunc("/verify", serveVerify)
