@@ -23,7 +23,7 @@
     <input type="submit" value="Update">
     </form>
     <script>
-    document.addEventListener('DOMContentLoaded', event => {
+    document.addEventListener('DOMContentLoaded', _ => {
         var path = window.location.pathname,
             i = path.substr(1).indexOf("/"),
             token = path.substr(i+2),
@@ -39,8 +39,8 @@
      <input name="rmrf" value="checked" type="checkbox" id="rmrf"></div>
  <div class="col col-2" data-label="Name">${p.name}</div>
      <div class="col col-3" data-label="Kind">${p.kind}</div>
-     <div class="col col-4" data-label="Created On">${created}/1/1970</div>
-     <div class="col col-5" data-label="Fingerprint">${p.fp}</div>`,
+     <div class="col col-4" data-label="Created On">${p.created_on}/1/1970</div>
+     <div class="col col-5" data-label="Fingerprint">${p.fp}</div>`
 
                     var newCheck = newDiv.querySelector("input")
                     newCheck.checked = p.verified
